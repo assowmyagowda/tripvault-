@@ -1,0 +1,38 @@
+.hero{
+    height:90vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:white;
+}
+
+.hero h1{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:22px;
+    width:700px;
+    max-width:90%;
+    margin-bottom:35px;
+}
+
+.hero button{
+    padding:15px 40px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    background:white;
+    color:#2563eb;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.hero button:hover{
+    transform:scale(1.05);
+}

@@ -1,0 +1,95 @@
+.edit-trip-page {
+  min-height: calc(100vh - 70px);
+  padding: 50px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+}
+
+.edit-trip-card {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12);
+}
+
+.edit-trip-card h1 {
+  text-align: center;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.edit-trip-card > p {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 30px;
+}
+
+.edit-trip-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-trip-card label {
+  margin-bottom: 7px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.edit-trip-card input,
+.edit-trip-card textarea {
+  padding: 13px;
+  margin-bottom: 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+}
+
+.edit-trip-card input:focus,
+.edit-trip-card textarea:focus {
+  border-color: #2563eb;
+}
+
+.edit-trip-card textarea {
+  resize: vertical;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.edit-buttons button {
+  flex: 1;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-buttons button:first-child {
+  background: white;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.edit-buttons button:last-child {
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+
+.edit-buttons button:last-child:hover {
+  background: #1d4ed8;
+}
+
+.edit-buttons button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
