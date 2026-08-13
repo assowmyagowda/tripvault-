@@ -9,10 +9,12 @@ function EditTrip() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    title: "",
     destination: "",
     startDate: "",
     endDate: "",
-    notes: "",
+    description: "",
+    rating: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -26,19 +28,13 @@ function EditTrip() {
     try {
       const token = localStorage.getItem("token");
 
-      // Get all trips first
-      const response = await api.get("/trips", {
+      const response = await api.get(`/trips/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const trips = response.data.trips || [];
-
-      // Find the selected trip
-      const trip = trips.find(
-        (item) => item._id === id
-      );
+      const trip = response.data.trip;
 
       if (!trip) {
         alert("Trip not found");
@@ -47,6 +43,7 @@ function EditTrip() {
       }
 
       setFormData({
+        title: trip.title || "",
         destination: trip.destination || "",
         startDate: trip.startDate
           ? trip.startDate.substring(0, 10)
@@ -54,7 +51,8 @@ function EditTrip() {
         endDate: trip.endDate
           ? trip.endDate.substring(0, 10)
           : "",
-        notes: trip.notes || "",
+        description: trip.description || "",
+        rating: trip.rating || "",
       });
     } catch (error) {
       console.error("Load trip error:", error);
@@ -85,11 +83,20 @@ function EditTrip() {
 
       const token = localStorage.getItem("token");
 
-      await api.put(`/trips/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await api.put(
+        `/trips/${id}`,
+        {
+          ...formData,
+          rating: formData.rating
+            ? Number(formData.rating)
+            : undefined,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       alert("Trip updated successfully! 🎉");
 
@@ -129,6 +136,19 @@ function EditTrip() {
           <p>Update your travel details.</p>
 
           <form onSubmit={handleSubmit}>
+            <label htmlFor="title">
+              Trip Title
+            </label>
+
+            <input
+              id="title"
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+
             <label htmlFor="destination">
               Destination
             </label>
@@ -168,18 +188,36 @@ function EditTrip() {
               required
             />
 
-            <label htmlFor="notes">
-              Notes
+            <label htmlFor="description">
+              Description
             </label>
 
             <textarea
-              id="notes"
-              name="notes"
-              value={formData.notes}
+              id="description"
+              name="description"
+              value={formData.description}
               onChange={handleChange}
               rows="5"
-              placeholder="Add notes about your trip..."
+              placeholder="Add notes or memories about your trip..."
             />
+
+            <label htmlFor="rating">
+              Rating (1–5)
+            </label>
+
+            <select
+              id="rating"
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
+            >
+              <option value="">Select rating</option>
+              <option value="1">⭐ 1</option>
+              <option value="2">⭐⭐ 2</option>
+              <option value="3">⭐⭐⭐ 3</option>
+              <option value="4">⭐⭐⭐⭐ 4</option>
+              <option value="5">⭐⭐⭐⭐⭐ 5</option>
+            </select>
 
             <div className="edit-buttons">
               <button

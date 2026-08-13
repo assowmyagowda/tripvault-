@@ -10,20 +10,30 @@ const router = express.Router();
 // ========================================
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { destination, startDate, endDate, notes } = req.body;
+    const {
+      title,
+      destination,
+      startDate,
+      endDate,
+      description,
+      rating,
+    } = req.body;
 
-    if (!destination || !startDate || !endDate) {
+    if (!title || !destination || !startDate || !endDate) {
       return res.status(400).json({
-        message: "Destination, start date and end date are required",
+        message:
+          "Title, destination, start date and end date are required",
       });
     }
 
     const trip = await Trip.create({
       user: req.user.userId,
+      title,
       destination,
       startDate,
       endDate,
-      notes: notes || "",
+      description: description || "",
+      rating,
     });
 
     res.status(201).json({
@@ -62,12 +72,48 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // ========================================
+// GET SINGLE TRIP
+// GET /api/trips/:id
+// ========================================
+router.get("/:id", authMiddleware, async (req, res) => {
+  try {
+    const trip = await Trip.findOne({
+      _id: req.params.id,
+      user: req.user.userId,
+    });
+
+    if (!trip) {
+      return res.status(404).json({
+        message: "Trip not found",
+      });
+    }
+
+    res.status(200).json({
+      trip,
+    });
+  } catch (error) {
+    console.error("Get single trip error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+// ========================================
 // UPDATE A TRIP
 // PUT /api/trips/:id
 // ========================================
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
-    const { destination, startDate, endDate, notes } = req.body;
+    const {
+      title,
+      destination,
+      startDate,
+      endDate,
+      description,
+      rating,
+    } = req.body;
 
     const trip = await Trip.findOne({
       _id: req.params.id,
@@ -78,6 +124,10 @@ router.put("/:id", authMiddleware, async (req, res) => {
       return res.status(404).json({
         message: "Trip not found",
       });
+    }
+
+    if (title !== undefined) {
+      trip.title = title;
     }
 
     if (destination !== undefined) {
@@ -92,8 +142,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
       trip.endDate = endDate;
     }
 
-    if (notes !== undefined) {
-      trip.notes = notes;
+    if (description !== undefined) {
+      trip.description = description;
+    }
+
+    if (rating !== undefined) {
+      trip.rating = rating;
     }
 
     await trip.save();

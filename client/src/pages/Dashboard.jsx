@@ -85,7 +85,9 @@ function Dashboard() {
       <main className="dashboard-page">
         <section className="dashboard-header">
           <div>
-            <p className="dashboard-label">MY TRAVEL SPACE</p>
+            <p className="dashboard-label">
+              MY TRAVEL SPACE
+            </p>
 
             <h1>
               Welcome, {user?.name || "Traveler"} 👋
@@ -155,15 +157,24 @@ function Dashboard() {
               {trips.map((trip) => (
                 <div className="trip-card" key={trip._id}>
                   <div className="trip-card-top">
-                    <span className="trip-icon">🌍</span>
+                    <span className="trip-icon">
+                      🌍
+                    </span>
 
                     <span className="trip-status">
                       Planned
                     </span>
                   </div>
 
-                  <h3>{trip.destination}</h3>
+                  {/* TITLE */}
+                  <h3>{trip.title}</h3>
 
+                  {/* DESTINATION */}
+                  <p className="trip-destination">
+                    📍 {trip.destination}
+                  </p>
+
+                  {/* DATES */}
                   <div className="trip-date">
                     <span>📅</span>
 
@@ -184,17 +195,32 @@ function Dashboard() {
                     </div>
                   </div>
 
-                  {trip.notes && (
-                    <p className="trip-notes">
-                      {trip.notes}
+                  {/* RATING */}
+                  {trip.rating && (
+                    <div className="trip-rating">
+                      <span>⭐</span>
+
+                      <strong>
+                        {trip.rating}/5
+                      </strong>
+                    </div>
+                  )}
+
+                  {/* DESCRIPTION */}
+                  {trip.description && (
+                    <p className="trip-description">
+                      {trip.description}
                     </p>
                   )}
 
+                  {/* ACTIONS */}
                   <div className="trip-card-actions">
                     <button
                       className="edit-btn"
                       onClick={() =>
-                        navigate(`/edit-trip/${trip._id}`)
+                        navigate(
+                          `/edit-trip/${trip._id}`
+                        )
                       }
                     >
                       ✏️ Edit

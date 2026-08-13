@@ -8,6 +8,12 @@ const tripSchema = new mongoose.Schema(
       required: true,
     },
 
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     destination: {
       type: String,
       required: true,
@@ -24,10 +30,16 @@ const tripSchema = new mongoose.Schema(
       required: true,
     },
 
-    notes: {
+    description: {
       type: String,
       trim: true,
       default: "",
+    },
+
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
     },
   },
   {
