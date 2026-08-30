@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/Register.css";
 import api from "../services/api";
+import { toast } from "react-toastify";
 
 function Register() {
   const navigate = useNavigate();
@@ -14,30 +15,60 @@ function Register() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    // Clear messages when user starts typing
+    setError("");
+    setSuccess("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setError("");
+    setSuccess("");
+
     try {
       setLoading(true);
 
-      const response = await api.post("/auth/register", formData);
-
-      alert(response.data.message || "Registration successful!");
-
-      navigate("/login");
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Registration failed. Please try again."
+      const response = await api.post(
+        "/auth/register",
+        formData
       );
+
+      const successMessage =
+        response.data.message ||
+        "Registration successful! Redirecting to login...";
+
+      // Show success message on page
+      setSuccess(successMessage);
+
+      // Show success toast
+      toast.success("Registration successful! 🎉");
+
+      // Redirect to login
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      const errorMessage =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
+
+      // Show error on page
+      setError(errorMessage);
+
+      // Show error toast
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -50,7 +81,25 @@ function Register() {
       <div className="register">
         <h2>Create Your TripVault Account ✈️</h2>
 
-        <form className="register-form" onSubmit={handleSubmit}>
+        {/* ERROR MESSAGE */}
+        {error && (
+          <div className="error-message">
+            ❌ {error}
+          </div>
+        )}
+
+        {/* SUCCESS MESSAGE */}
+        {success && (
+          <div className="success-message">
+            ✅ {success}
+          </div>
+        )}
+
+        <form
+          className="register-form"
+          onSubmit={handleSubmit}
+        >
+          {/* NAME */}
           <input
             type="text"
             name="name"
@@ -58,8 +107,10 @@ function Register() {
             value={formData.name}
             onChange={handleChange}
             required
+            disabled={loading}
           />
 
+          {/* EMAIL */}
           <input
             type="email"
             name="email"
@@ -67,8 +118,10 @@ function Register() {
             value={formData.email}
             onChange={handleChange}
             required
+            disabled={loading}
           />
 
+          {/* PASSWORD */}
           <input
             type="password"
             name="password"
@@ -76,10 +129,22 @@ function Register() {
             value={formData.password}
             onChange={handleChange}
             required
+            disabled={loading}
           />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Creating Account..." : "Register"}
+          {/* REGISTER BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="button-spinner"></span>
+                Creating Account...
+              </>
+            ) : (
+              "Register"
+            )}
           </button>
         </form>
       </div>

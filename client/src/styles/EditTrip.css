@@ -1,95 +1,270 @@
 .edit-trip-page {
   min-height: calc(100vh - 70px);
   padding: 50px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+  background: linear-gradient(135deg, #f8fafc, #eff6ff);
 }
 
 .edit-trip-card {
   width: 100%;
-  max-width: 600px;
-  background: white;
+  max-width: 650px;
+  margin: 0 auto;
   padding: 40px;
+  background: white;
   border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.1);
 }
 
 .edit-trip-card h1 {
-  text-align: center;
+  margin: 0;
   color: #0f172a;
-  margin-bottom: 8px;
+  font-size: 32px;
 }
 
-.edit-trip-card > p {
-  text-align: center;
+.edit-subtitle {
+  margin: 8px 0 30px;
   color: #64748b;
-  margin-bottom: 30px;
+  font-size: 16px;
 }
 
 .edit-trip-card form {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .edit-trip-card label {
-  margin-bottom: 7px;
+  margin-top: 8px;
   color: #334155;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .edit-trip-card input,
-.edit-trip-card textarea {
-  padding: 13px;
-  margin-bottom: 20px;
+.edit-trip-card textarea,
+.edit-trip-card select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
+  background: white;
+  color: #0f172a;
   font-size: 15px;
-  font-family: inherit;
   outline: none;
+  transition: 0.2s ease;
 }
 
 .edit-trip-card input:focus,
-.edit-trip-card textarea:focus {
+.edit-trip-card textarea:focus,
+.edit-trip-card select:focus {
   border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .edit-trip-card textarea {
   resize: vertical;
+  min-height: 120px;
 }
+
+/* Error message */
+
+.edit-error {
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+/* Success message */
+
+.edit-success {
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-size: 14px;
+}
+
+/* Current photo */
+
+.current-photo {
+  margin-top: 15px;
+}
+
+.current-photo label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.current-photo-image {
+  width: 220px;
+  height: 145px;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Selected photo */
+
+.selected-photo {
+  margin: 5px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+/* Buttons */
 
 .edit-buttons {
   display: flex;
   gap: 12px;
+  margin-top: 25px;
 }
 
 .edit-buttons button {
   flex: 1;
-  padding: 13px;
+  padding: 13px 18px;
+  border: none;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.edit-buttons button:first-child {
-  background: white;
+.cancel-edit-btn {
+  background: #f1f5f9;
   color: #475569;
-  border: 1px solid #cbd5e1;
 }
 
-.edit-buttons button:last-child {
+.cancel-edit-btn:hover {
+  background: #e2e8f0;
+}
+
+.save-edit-btn {
   background: #2563eb;
   color: white;
-  border: none;
 }
 
-.edit-buttons button:last-child:hover {
+.save-edit-btn:hover {
   background: #1d4ed8;
+  transform: translateY(-1px);
 }
 
 .edit-buttons button:disabled {
-  opacity: 0.7;
+  opacity: 0.65;
   cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading */
+
+.edit-loading-page {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f8fafc, #eff6ff);
+}
+
+.edit-loading {
+  text-align: center;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.edit-spinner {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 15px;
+  border: 4px solid #dbeafe;
+  border-top: 4px solid #2563eb;
+  border-radius: 50%;
+  animation: editSpin 0.8s linear infinite;
+}
+
+@keyframes editSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button spinner */
+
+.button-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 7px;
+  vertical-align: -2px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: editButtonSpin 0.7s linear infinite;
+}
+
+@keyframes editButtonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tablet */
+
+@media (max-width: 700px) {
+  .edit-trip-page {
+    padding: 30px 15px;
+  }
+
+  .edit-trip-card {
+    padding: 30px 22px;
+  }
+
+  .edit-trip-card h1 {
+    font-size: 28px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .edit-trip-page {
+    padding: 20px 12px;
+  }
+
+  .edit-trip-card {
+    padding: 25px 18px;
+    border-radius: 15px;
+  }
+
+  .edit-trip-card h1 {
+    font-size: 24px;
+  }
+
+  .edit-subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .current-photo-image {
+    width: 100%;
+    height: 180px;
+  }
+
+  .edit-buttons {
+    flex-direction: column;
+  }
+
+  .edit-buttons button {
+    width: 100%;
+  }
 }

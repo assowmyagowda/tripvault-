@@ -23,13 +23,29 @@ function EditTrip() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Week 4 messages
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // ==========================================
+  // LOAD TRIP
+  // ==========================================
+
   useEffect(() => {
     loadTrip();
   }, [id]);
 
   const loadTrip = async () => {
     try {
+      setLoading(true);
+      setError("");
+
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
       const response = await api.get(`/trips/${id}`, {
         headers: {
@@ -40,8 +56,7 @@ function EditTrip() {
       const trip = response.data.trip;
 
       if (!trip) {
-        alert("Trip not found");
-        navigate("/dashboard");
+        setError("Trip not found.");
         return;
       }
 
@@ -62,39 +77,113 @@ function EditTrip() {
     } catch (error) {
       console.error("Load trip error:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Unable to load trip"
-      );
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+        return;
+      }
 
-      navigate("/dashboard");
+      setError(
+        error.response?.data?.message ||
+          "Unable to load this trip. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  // ==========================================
+  // HANDLE INPUT CHANGES
+  // ==========================================
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    setError("");
+    setSuccess("");
   };
+
+  // ==========================================
+  // HANDLE PHOTO
+  // ==========================================
 
   const handlePhotoChange = (e) => {
     const selectedFile = e.target.files[0];
 
-    if (selectedFile) {
-      setPhoto(selectedFile);
+    if (!selectedFile) {
+      setPhoto(null);
+      return;
     }
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(selectedFile.type)) {
+      setError(
+        "Please select a JPG, JPEG, PNG, or WEBP image."
+      );
+
+      setPhoto(null);
+      e.target.value = "";
+      return;
+    }
+
+    // Maximum 5 MB
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setError("Photo size must be less than 5 MB.");
+
+      setPhoto(null);
+      e.target.value = "";
+      return;
+    }
+
+    setError("");
+    setSuccess("");
+    setPhoto(selectedFile);
   };
+
+  // ==========================================
+  // UPDATE TRIP
+  // ==========================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setError("");
+    setSuccess("");
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Your session has expired. Please login again.");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+
+      return;
+    }
+
+    // Validate dates
+    if (
+      formData.startDate &&
+      formData.endDate &&
+      formData.endDate < formData.startDate
+    ) {
+      setError("End date cannot be before start date.");
+      return;
+    }
+
     try {
       setSaving(true);
-
-      const token = localStorage.getItem("token");
 
       // ==========================================
       // STEP 1: UPDATE TRIP DETAILS
@@ -103,7 +192,11 @@ function EditTrip() {
       await api.put(
         `/trips/${id}`,
         {
-          ...formData,
+          title: formData.title,
+          destination: formData.destination,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          description: formData.description,
           rating: formData.rating
             ? Number(formData.rating)
             : undefined,
@@ -116,51 +209,91 @@ function EditTrip() {
       );
 
       // ==========================================
-      // STEP 2: UPLOAD NEW PHOTO IF SELECTED
+      // STEP 2: UPLOAD NEW PHOTO
       // ==========================================
 
       if (photo) {
-        const imageData = new FormData();
+        try {
+          const imageData = new FormData();
 
-        imageData.append("photo", photo);
+          imageData.append("photo", photo);
 
-        await api.post(
-          `/trips/${id}/upload`,
-          imageData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+          await api.post(
+            `/trips/${id}/upload`,
+            imageData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        } catch (uploadError) {
+          console.error(
+            "Photo upload error:",
+            uploadError
+          );
+
+          setError(
+            "Trip details were updated, but the new photo could not be uploaded."
+          );
+
+          setSaving(false);
+          return;
+        }
       }
 
-      alert("Trip updated successfully! 🎉");
+      // ==========================================
+      // SUCCESS
+      // ==========================================
 
-      navigate("/dashboard");
+      setSuccess("Trip updated successfully! 🎉");
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     } catch (error) {
       console.error("Update trip error:", error);
 
-      alert(
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        navigate("/login");
+        return;
+      }
+
+      setError(
         error.response?.data?.message ||
-          "Unable to update trip"
+          "Unable to update trip. Please try again."
       );
     } finally {
       setSaving(false);
     }
   };
 
+  // ==========================================
+  // LOADING SCREEN
+  // ==========================================
+
   if (loading) {
     return (
       <>
         <Navbar />
 
-        <div className="edit-loading">
-          Loading trip...
-        </div>
+        <main className="edit-loading-page">
+          <div className="edit-loading">
+            <div className="edit-spinner"></div>
+
+            <p>Loading your trip...</p>
+          </div>
+        </main>
       </>
     );
   }
+
+  // ==========================================
+  // MAIN UI
+  // ==========================================
 
   return (
     <>
@@ -171,13 +304,30 @@ function EditTrip() {
 
           <h1>Edit Trip ✏️</h1>
 
-          <p>
-            Update your travel details.
+          <p className="edit-subtitle">
+            Update your travel details and memories.
           </p>
+
+          {/* ERROR MESSAGE */}
+
+          {error && (
+            <div className="edit-error">
+              ❌ {error}
+            </div>
+          )}
+
+          {/* SUCCESS MESSAGE */}
+
+          {success && (
+            <div className="edit-success">
+              ✅ {success}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
 
             {/* TITLE */}
+
             <label htmlFor="title">
               Trip Title
             </label>
@@ -186,12 +336,15 @@ function EditTrip() {
               id="title"
               type="text"
               name="title"
+              placeholder="Example: Goa Vacation"
               value={formData.title}
               onChange={handleChange}
               required
+              disabled={saving}
             />
 
             {/* DESTINATION */}
+
             <label htmlFor="destination">
               Destination
             </label>
@@ -200,12 +353,15 @@ function EditTrip() {
               id="destination"
               type="text"
               name="destination"
+              placeholder="Example: Goa"
               value={formData.destination}
               onChange={handleChange}
               required
+              disabled={saving}
             />
 
             {/* START DATE */}
+
             <label htmlFor="startDate">
               Start Date
             </label>
@@ -217,9 +373,11 @@ function EditTrip() {
               value={formData.startDate}
               onChange={handleChange}
               required
+              disabled={saving}
             />
 
             {/* END DATE */}
+
             <label htmlFor="endDate">
               End Date
             </label>
@@ -231,9 +389,11 @@ function EditTrip() {
               value={formData.endDate}
               onChange={handleChange}
               required
+              disabled={saving}
             />
 
             {/* DESCRIPTION */}
+
             <label htmlFor="description">
               Description
             </label>
@@ -245,11 +405,13 @@ function EditTrip() {
               onChange={handleChange}
               rows="5"
               placeholder="Add notes or memories about your trip..."
+              disabled={saving}
             />
 
             {/* RATING */}
+
             <label htmlFor="rating">
-              Rating (1–5)
+              Rating
             </label>
 
             <select
@@ -257,6 +419,7 @@ function EditTrip() {
               name="rating"
               value={formData.rating}
               onChange={handleChange}
+              disabled={saving}
             >
               <option value="">
                 Select rating
@@ -284,8 +447,10 @@ function EditTrip() {
             </select>
 
             {/* CURRENT PHOTO */}
+
             {currentPhoto && (
               <div className="current-photo">
+
                 <label>
                   Current Trip Photo
                 </label>
@@ -293,19 +458,14 @@ function EditTrip() {
                 <img
                   src={currentPhoto}
                   alt="Current trip"
-                  style={{
-                    width: "200px",
-                    height: "130px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                    display: "block",
-                    marginTop: "8px",
-                  }}
+                  className="current-photo-image"
                 />
+
               </div>
             )}
 
             {/* NEW PHOTO */}
+
             <label htmlFor="photo">
               Change Trip Photo
             </label>
@@ -315,16 +475,18 @@ function EditTrip() {
               type="file"
               accept="image/png,image/jpeg,image/jpg,image/webp"
               onChange={handlePhotoChange}
+              disabled={saving}
             />
 
             {photo && (
-              <p>
-                New photo selected:{" "}
+              <p className="selected-photo">
+                📸 New photo selected:{" "}
                 <strong>{photo.name}</strong>
               </p>
             )}
 
             {/* BUTTONS */}
+
             <div className="edit-buttons">
 
               <button
@@ -333,6 +495,7 @@ function EditTrip() {
                 onClick={() =>
                   navigate("/dashboard")
                 }
+                disabled={saving}
               >
                 Cancel
               </button>
@@ -342,9 +505,14 @@ function EditTrip() {
                 className="save-edit-btn"
                 disabled={saving}
               >
-                {saving
-                  ? "Saving..."
-                  : "Save Changes"}
+                {saving ? (
+                  <>
+                    <span className="button-spinner"></span>
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes 💾"
+                )}
               </button>
 
             </div>

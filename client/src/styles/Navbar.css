@@ -1,37 +1,149 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.navbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:18px 60px;
-    background:#0f172a;
-    color:white;
-    position:sticky;
-    top:0;
+.navbar {
+  width: 100%;
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 15px 60px;
+
+  background: #0f172a;
+  color: white;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.logo{
-    font-size:28px;
-    font-weight:bold;
+/* LOGO */
+
+.logo {
+  color: white;
+  text-decoration: none;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  white-space: nowrap;
 }
 
-.nav-links{
-    display:flex;
-    gap:30px;
+.logo:hover {
+  color: #38bdf8;
 }
 
-.nav-links a{
-    color:white;
-    text-decoration:none;
-    font-size:18px;
-    transition:.3s;
+/* DESKTOP LINKS */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
-.nav-links a:hover{
-    color:#38bdf8;
+.nav-links a {
+  color: white;
+  text-decoration: none;
+
+  font-size: 17px;
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: #38bdf8;
+}
+
+/* HAMBURGER */
+
+.hamburger {
+  display: none;
+
+  background: transparent;
+  border: none;
+
+  color: white;
+
+  font-size: 30px;
+
+  cursor: pointer;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .logo {
+    font-size: 23px;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+
+    position: absolute;
+
+    top: 70px;
+    left: 0;
+
+    width: 100%;
+
+    background: #0f172a;
+
+    flex-direction: column;
+    align-items: center;
+
+    gap: 0;
+
+    padding: 10px 0 20px;
+  }
+
+  /* IMPORTANT */
+
+  .nav-links.show {
+    display: flex;
+  }
+
+  .nav-links a {
+    width: 100%;
+
+    text-align: center;
+
+    padding: 15px;
+
+    font-size: 17px;
+  }
+
+  .nav-links a:hover {
+    background: #1e293b;
+    color: #38bdf8;
+  }
+}
+
+/* VERY SMALL PHONES */
+
+@media (max-width: 375px) {
+  .navbar {
+    padding: 14px 15px;
+  }
+
+  .logo {
+    font-size: 21px;
+  }
+
+  .hamburger {
+    font-size: 27px;
+  }
 }

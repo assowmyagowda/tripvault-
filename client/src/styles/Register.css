@@ -1,75 +1,220 @@
 .register {
   min-height: calc(100vh - 75px);
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   padding: 40px 20px;
+
   background: linear-gradient(135deg, #eff6ff, #ecfeff);
 }
 
 .register h2 {
   margin-bottom: 25px;
+
   color: #0f172a;
+
   font-size: 30px;
+
   text-align: center;
 }
+
+/* ============================= */
+/* REGISTER FORM */
+/* ============================= */
 
 .register-form {
   width: 100%;
   max-width: 420px;
+
   padding: 35px;
+
   background: white;
+
   border-radius: 18px;
+
   box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12);
+
   display: flex;
   flex-direction: column;
+
   gap: 16px;
+
+  box-sizing: border-box;
 }
+
+/* ============================= */
+/* INPUTS */
+/* ============================= */
 
 .register-form input {
   width: 100%;
+
   padding: 14px 16px;
+
   border: 1px solid #cbd5e1;
+
   border-radius: 10px;
+
   font-size: 16px;
+
   outline: none;
+
   transition: 0.2s;
+
+  box-sizing: border-box;
 }
 
 .register-form input:focus {
   border-color: #2563eb;
+
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
+.register-form input:disabled {
+  background: #f1f5f9;
+
+  cursor: not-allowed;
+}
+
+/* ============================= */
+/* ERROR MESSAGE */
+/* ============================= */
+
+.error-message {
+  width: 100%;
+  max-width: 420px;
+
+  box-sizing: border-box;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
+
+  border-radius: 10px;
+
+  padding: 12px 15px;
+
+  margin-bottom: 20px;
+
+  font-size: 14px;
+
+  text-align: center;
+}
+
+/* ============================= */
+/* SUCCESS MESSAGE */
+/* ============================= */
+
+.success-message {
+  width: 100%;
+  max-width: 420px;
+
+  box-sizing: border-box;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+
+  border: 1px solid #bbf7d0;
+
+  border-radius: 10px;
+
+  padding: 12px 15px;
+
+  margin-bottom: 20px;
+
+  font-size: 14px;
+
+  text-align: center;
+}
+
+/* ============================= */
+/* REGISTER BUTTON */
+/* ============================= */
+
 .register-form button {
   padding: 14px;
+
   border: none;
+
   border-radius: 10px;
+
   background: #2563eb;
+
   color: white;
+
   font-size: 16px;
+
   font-weight: 600;
+
   cursor: pointer;
+
   transition: 0.2s;
 }
 
-.register-form button:hover {
+.register-form button:hover:not(:disabled) {
   background: #1d4ed8;
+
   transform: translateY(-1px);
 }
 
 .register-form button:disabled {
   opacity: 0.7;
+
   cursor: not-allowed;
 }
 
+/* ============================= */
+/* BUTTON SPINNER */
+/* ============================= */
+
+.button-spinner {
+  display: inline-block;
+
+  width: 14px;
+  height: 14px;
+
+  margin-right: 8px;
+
+  border: 2px solid rgba(255, 255, 255, 0.5);
+
+  border-top: 2px solid white;
+
+  border-radius: 50%;
+
+  animation: registerSpin 0.7s linear infinite;
+}
+
+@keyframes registerSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================= */
+/* MOBILE RESPONSIVE */
+/* ============================= */
+
 @media (max-width: 500px) {
+  .register {
+    padding: 30px 20px;
+  }
+
   .register h2 {
     font-size: 24px;
   }
 
   .register-form {
     padding: 25px 20px;
+  }
+
+  .error-message,
+  .success-message {
+    max-width: 100%;
   }
 }

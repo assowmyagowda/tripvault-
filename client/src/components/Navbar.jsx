@@ -1,17 +1,47 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 
 function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <nav className="navbar">
-      <div className="logo">
+      {/* Logo */}
+      <Link to="/" className="logo" onClick={closeMenu}>
         ✈️ TripVault
-      </div>
+      </Link>
 
-      <div className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/register">Register</Link>
+      {/* Hamburger */}
+      <button
+        className="hamburger"
+        onClick={toggleMenu}
+        aria-label="Open navigation menu"
+      >
+        ☰
+      </button>
+
+      {/* Links */}
+      <div className={`nav-links ${menuOpen ? "show" : ""}`}>
+        <Link to="/" onClick={closeMenu}>
+          Home
+        </Link>
+
+        <Link to="/login" onClick={closeMenu}>
+          Login
+        </Link>
+
+        <Link to="/register" onClick={closeMenu}>
+          Register
+        </Link>
       </div>
     </nav>
   );
