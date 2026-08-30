@@ -26,6 +26,9 @@ function Dashboard() {
         },
       });
 
+      // Check what the backend is sending
+      console.log("TRIPS FROM SERVER:", response.data.trips);
+
       setTrips(response.data.trips || []);
     } catch (error) {
       console.error("Error fetching trips:", error);
@@ -156,6 +159,36 @@ function Dashboard() {
             <div className="trip-grid">
               {trips.map((trip) => (
                 <div className="trip-card" key={trip._id}>
+
+                  {/* ============================= */}
+                  {/* TRIP PHOTO */}
+                  {/* ============================= */}
+
+                  {trip.coverImage ? (
+                    <div className="trip-image-container">
+                      <img
+                        src={trip.coverImage}
+                        alt={trip.title || "Trip"}
+                        className="trip-image"
+                        onError={(e) => {
+                          console.error(
+                            "Image failed to load:",
+                            trip.coverImage
+                          );
+
+                          e.currentTarget.style.display =
+                            "none";
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="trip-image-placeholder">
+                      🌍
+                    </div>
+                  )}
+
+                  {/* TOP SECTION */}
+
                   <div className="trip-card-top">
                     <span className="trip-icon">
                       🌍
@@ -167,14 +200,17 @@ function Dashboard() {
                   </div>
 
                   {/* TITLE */}
+
                   <h3>{trip.title}</h3>
 
                   {/* DESTINATION */}
+
                   <p className="trip-destination">
                     📍 {trip.destination}
                   </p>
 
                   {/* DATES */}
+
                   <div className="trip-date">
                     <span>📅</span>
 
@@ -196,6 +232,7 @@ function Dashboard() {
                   </div>
 
                   {/* RATING */}
+
                   {trip.rating && (
                     <div className="trip-rating">
                       <span>⭐</span>
@@ -207,6 +244,7 @@ function Dashboard() {
                   )}
 
                   {/* DESCRIPTION */}
+
                   {trip.description && (
                     <p className="trip-description">
                       {trip.description}
@@ -214,6 +252,7 @@ function Dashboard() {
                   )}
 
                   {/* ACTIONS */}
+
                   <div className="trip-card-actions">
                     <button
                       className="edit-btn"

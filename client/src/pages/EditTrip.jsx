@@ -17,6 +17,9 @@ function EditTrip() {
     rating: "",
   });
 
+  const [photo, setPhoto] = useState(null);
+  const [currentPhoto, setCurrentPhoto] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -54,6 +57,8 @@ function EditTrip() {
         description: trip.description || "",
         rating: trip.rating || "",
       });
+
+      setCurrentPhoto(trip.coverImage || "");
     } catch (error) {
       console.error("Load trip error:", error);
 
@@ -75,6 +80,14 @@ function EditTrip() {
     });
   };
 
+  const handlePhotoChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      setPhoto(selectedFile);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,6 +95,10 @@ function EditTrip() {
       setSaving(true);
 
       const token = localStorage.getItem("token");
+
+      // ==========================================
+      // STEP 1: UPDATE TRIP DETAILS
+      // ==========================================
 
       await api.put(
         `/trips/${id}`,
@@ -97,6 +114,26 @@ function EditTrip() {
           },
         }
       );
+
+      // ==========================================
+      // STEP 2: UPLOAD NEW PHOTO IF SELECTED
+      // ==========================================
+
+      if (photo) {
+        const imageData = new FormData();
+
+        imageData.append("photo", photo);
+
+        await api.post(
+          `/trips/${id}/upload`,
+          imageData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
       alert("Trip updated successfully! 🎉");
 
@@ -131,11 +168,16 @@ function EditTrip() {
 
       <main className="edit-trip-page">
         <div className="edit-trip-card">
+
           <h1>Edit Trip ✏️</h1>
 
-          <p>Update your travel details.</p>
+          <p>
+            Update your travel details.
+          </p>
 
           <form onSubmit={handleSubmit}>
+
+            {/* TITLE */}
             <label htmlFor="title">
               Trip Title
             </label>
@@ -149,6 +191,7 @@ function EditTrip() {
               required
             />
 
+            {/* DESTINATION */}
             <label htmlFor="destination">
               Destination
             </label>
@@ -162,6 +205,7 @@ function EditTrip() {
               required
             />
 
+            {/* START DATE */}
             <label htmlFor="startDate">
               Start Date
             </label>
@@ -175,6 +219,7 @@ function EditTrip() {
               required
             />
 
+            {/* END DATE */}
             <label htmlFor="endDate">
               End Date
             </label>
@@ -188,6 +233,7 @@ function EditTrip() {
               required
             />
 
+            {/* DESCRIPTION */}
             <label htmlFor="description">
               Description
             </label>
@@ -201,6 +247,7 @@ function EditTrip() {
               placeholder="Add notes or memories about your trip..."
             />
 
+            {/* RATING */}
             <label htmlFor="rating">
               Rating (1–5)
             </label>
@@ -211,19 +258,81 @@ function EditTrip() {
               value={formData.rating}
               onChange={handleChange}
             >
-              <option value="">Select rating</option>
-              <option value="1">⭐ 1</option>
-              <option value="2">⭐⭐ 2</option>
-              <option value="3">⭐⭐⭐ 3</option>
-              <option value="4">⭐⭐⭐⭐ 4</option>
-              <option value="5">⭐⭐⭐⭐⭐ 5</option>
+              <option value="">
+                Select rating
+              </option>
+
+              <option value="1">
+                ⭐ 1
+              </option>
+
+              <option value="2">
+                ⭐⭐ 2
+              </option>
+
+              <option value="3">
+                ⭐⭐⭐ 3
+              </option>
+
+              <option value="4">
+                ⭐⭐⭐⭐ 4
+              </option>
+
+              <option value="5">
+                ⭐⭐⭐⭐⭐ 5
+              </option>
             </select>
 
+            {/* CURRENT PHOTO */}
+            {currentPhoto && (
+              <div className="current-photo">
+                <label>
+                  Current Trip Photo
+                </label>
+
+                <img
+                  src={currentPhoto}
+                  alt="Current trip"
+                  style={{
+                    width: "200px",
+                    height: "130px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                    display: "block",
+                    marginTop: "8px",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* NEW PHOTO */}
+            <label htmlFor="photo">
+              Change Trip Photo
+            </label>
+
+            <input
+              id="photo"
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              onChange={handlePhotoChange}
+            />
+
+            {photo && (
+              <p>
+                New photo selected:{" "}
+                <strong>{photo.name}</strong>
+              </p>
+            )}
+
+            {/* BUTTONS */}
             <div className="edit-buttons">
+
               <button
                 type="button"
                 className="cancel-edit-btn"
-                onClick={() => navigate("/dashboard")}
+                onClick={() =>
+                  navigate("/dashboard")
+                }
               >
                 Cancel
               </button>
@@ -237,7 +346,9 @@ function EditTrip() {
                   ? "Saving..."
                   : "Save Changes"}
               </button>
+
             </div>
+
           </form>
         </div>
       </main>

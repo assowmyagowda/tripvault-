@@ -41,6 +41,18 @@ const tripSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+
+    // Week 3 - Cover image
+    coverImage: {
+      type: String,
+      default: "",
+    },
+
+    // Week 3 - Multiple photos
+    photos: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

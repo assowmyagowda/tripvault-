@@ -1,6 +1,7 @@
 const express = require("express");
 const Trip = require("../models/Trip");
 const authMiddleware = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
@@ -164,6 +165,61 @@ router.put("/:id", authMiddleware, async (req, res) => {
     });
   }
 });
+
+// ========================================
+// UPLOAD TRIP PHOTO
+// POST /api/trips/:id/upload
+// ========================================
+router.post(
+  "/:id/upload",
+  authMiddleware,
+  upload.single("photo"),
+  async (req, res) => {
+    try {
+      const trip = await Trip.findOne({
+        _id: req.params.id,
+        user: req.user.userId,
+      });
+
+      if (!trip) {
+        return res.status(404).json({
+          message: "Trip not found",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          message: "Please select an image",
+        });
+      }
+
+      // Cloudinary returns the uploaded image URL here
+      const imageUrl = req.file.path;
+
+      // First uploaded image becomes the cover image
+      if (!trip.coverImage) {
+        trip.coverImage = imageUrl;
+      }
+
+      // Add image to photos array
+      trip.photos.push(imageUrl);
+
+      await trip.save();
+
+      res.status(200).json({
+        message: "Photo uploaded successfully",
+        trip,
+        imageUrl,
+      });
+    } catch (error) {
+      console.error("Upload photo error:", error);
+
+      res.status(500).json({
+        message: "Unable to upload photo",
+      });
+    }
+  }
+);
 
 // ========================================
 // DELETE A TRIP
