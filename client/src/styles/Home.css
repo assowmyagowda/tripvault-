@@ -1,38 +1,74 @@
-.hero{
-    height:90vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    background:linear-gradient(135deg,#2563eb,#06b6d4);
-    color:white;
+.hero {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: white;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.hero h1{
-    font-size:60px;
-    margin-bottom:20px;
+.hero h1 {
+    font-size: 60px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    max-width: 1000px;
 }
 
-.hero p{
-    font-size:22px;
-    width:700px;
-    max-width:90%;
-    margin-bottom:35px;
+.hero p {
+    font-size: 22px;
+    line-height: 1.5;
+    width: 700px;
+    max-width: 90%;
+    margin-bottom: 35px;
 }
 
-.hero button{
-    padding:15px 40px;
-    font-size:18px;
-    border:none;
-    border-radius:8px;
-    background:white;
-    color:#2563eb;
-    cursor:pointer;
-    font-weight:bold;
-    transition:.3s;
+.hero .get-started {
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    text-decoration: none;
 }
 
-.hero button:hover{
-    transform:scale(1.05);
+.hero .get-started:hover {
+    transform: scale(1.05);
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 480px) {
+
+    .hero {
+        height: 90vh;
+        padding: 20px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+        line-height: 1.25;
+        max-width: 340px;
+        margin-bottom: 18px;
+    }
+
+    .hero p {
+        font-size: 16px;
+        line-height: 1.5;
+        width: auto;
+        max-width: 330px;
+        margin-bottom: 28px;
+    }
+
+    .hero .get-started {
+        padding: 13px 28px;
+        font-size: 16px;
+    }
 }
