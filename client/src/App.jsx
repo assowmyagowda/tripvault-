@@ -10,8 +10,8 @@ import EditTrip from "./pages/EditTrip";
 function App() {
   return (
     <Routes>
-      {/* Register page opens first */}
-      <Route path="/" element={<Register />} />
+      {/* Home page opens first */}
+      <Route path="/" element={<Home />} />
 
       {/* Home */}
       <Route path="/home" element={<Home />} />

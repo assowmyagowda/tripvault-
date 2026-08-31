@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/Home.css";
 
@@ -14,7 +15,9 @@ function Home() {
           memories.
         </p>
 
-        <button>Get Started</button>
+        <Link to="/register" className="get-started">
+          Get Started
+        </Link>
       </section>
     </>
   );
